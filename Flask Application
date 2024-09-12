@@ -1,0 +1,28 @@
+from flask import Flask, request, jsonify
+import joblib
+import numpy as np
+
+app = Flask(__name__)
+
+# Load models
+disease_model = joblib.load('disease_model.pkl')
+insurance_model = joblib.load('insurance_model.pkl')
+scaler = joblib.load('scaler.pkl')
+
+@app.route('/predict_disease', methods=['POST'])
+def predict_disease():
+    data = request.json
+    features = np.array([data['symptoms']])
+    prediction = disease_model.predict(features)
+    return jsonify({'disease': prediction[0]})
+
+@app.route('/predict_insurance', methods=['POST'])
+def predict_insurance():
+    data = request.json
+    features = np.array([data['parameters']])
+    features = scaler.transform(features)
+    prediction = insurance_model.predict(features)
+    return jsonify({'premium': prediction[0]})
+
+if __name__ == '__main__':
+    app.run(debug=True)
