@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Aid Application</title>
+</head>
+<body>
+    <h1>Healthcare Aid Application</h1>
+
+    <h2>Disease Prediction</h2>
+    <form id="disease-form">
+        <label for="symptoms">Symptoms (comma separated):</label>
+        <input type="text" id="symptoms" name="symptoms">
+        <button type="button" onclick="predictDisease()">Predict Disease</button>
+    </form>
+    <div id="disease-result"></div>
+
+    <h2>Insurance Premium Prediction</h2>
+    <form id="insurance-form">
+        <label for="parameters">Parameters (comma separated):</label>
+        <input type="text" id="parameters" name="parameters">
+        <button type="button" onclick="predictInsurance()">Predict Premium</button>
+    </form>
+    <div id="insurance-result"></div>
+
+    <script>
+        async function predictDisease() {
+            const symptoms = document.getElementById('symptoms').value.split(',').map(Number);
+            const response = await fetch('/predict_disease', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ symptoms }),
+            });
+            const result = await response.json();
+            document.getElementById('disease-result').innerText = 'Predicted Disease: ' + result.disease;
+        }
+
+        async function predictInsurance() {
+            const parameters = document.getElementById('parameters').value.split(',').map(Number);
+            const response = await fetch('/predict_insurance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ parameters }),
+            });
+            const result = await response.json();
+            document.getElementById('insurance-result').innerText = 'Estimated Premium: ' + result.premium;
+        }
+    </script>
+</body>
+</html>
